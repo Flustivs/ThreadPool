@@ -7,27 +7,39 @@ namespace ThreadPooling
     {
         static void Main(string[] args)
         {
+            Thread oldThread = new Thread(Write);
             for (int i = 0; i < 5; i++) 
             {
                 ThreadPool.QueueUserWorkItem(Write);
                 Thread.Sleep(10);
 
             }
-            for (int i = 0; i <5; i++)
+            for (int i = 0; i < 5; i++)
             {
                 Thread th = new Thread(Write);
-                th.Start();
+                th.Start(); // Starts the thread from where this threads entrypoint is, in this case its th Write() method
+
+                if (i == 4)
+                {
+                    th.Join(); // The Join method will block and thread calling to this untill its terminated
+                    Console.WriteLine("Succesfully used Join()");
+                }
+                if (i == 1)
+                {
+                    th.Interrupt(); // Read about how the Abort would give a compile-time warning plus i couldnt make it work, but i know it
+                    Console.WriteLine("Succesfully used Interrupt()");
+                }
                 Thread.Sleep(10);
             }
         }
 
         static void Write(object callback)
         {
-            smth("\nHello World!\n");
+            ThreadWrite("\nHello World!\n");
             Process();
         }
 
-        static void smth(string obj)
+        static void ThreadWrite(string obj)
         {
             Console.WriteLine(obj);
         }
